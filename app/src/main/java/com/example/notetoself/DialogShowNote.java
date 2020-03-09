@@ -39,6 +39,7 @@ public class DialogShowNote extends DialogFragment {
 
             }
         });
+        return builder.create();
     }
 
 
