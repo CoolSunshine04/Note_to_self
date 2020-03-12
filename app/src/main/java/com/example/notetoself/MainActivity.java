@@ -3,37 +3,47 @@ package com.example.notetoself;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    ArrayList<Note> ListNote = new ArrayList<>();
+    ArrayList<Note> listNote = new ArrayList<>();
+    RecyclerView recyclerView;
+    NoteAdapter adapter;
 
-
+    public void showNote(int index) {
+        DialogShowNote dialog = new DialogShowNote();
+        dialog.sendNoteSelected(listNote.get(index));
+        dialog.show(getSupportFragmentManager(), "");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        final Button button = (Button)findViewById(R.id.button);
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                DialogShowNote dialog = new DialogShowNote();
-//                dialog.sendNoteSelected(tempNote);
-//                dialog.show(getSupportFragmentManager(), "123");
-//            }
-//        });
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        adapter = new NoteAdapter(this, listNote);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        recyclerView.setAdapter(adapter);
+
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -69,7 +79,8 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
     public void createNewNote(Note note){
-       ListNote.add(note);
+        listNote.add(note);
+        adapter.notifyDataSetChanged();
     }
 
 }

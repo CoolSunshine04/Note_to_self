@@ -15,6 +15,10 @@ public class DialogShowNote extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        View dialogView = inflater.inflate(R.layout.dialog_show_note, null);
         final Button btnOk = (Button) dialogView.findViewById(R.id.btnOk);
         final TextView textViewImportant = (TextView) dialogView.findViewById(R.id.textViewImportant);
         final TextView textViewTodo = (TextView) dialogView.findViewById(R.id.textViewTodo);
@@ -39,6 +43,7 @@ public class DialogShowNote extends DialogFragment {
 
             }
         });
+        builder.setView(dialogView);
         return builder.create();
     }
 
@@ -46,10 +51,7 @@ public class DialogShowNote extends DialogFragment {
     public void sendNoteSelected(Note noteSelected) {
         note = noteSelected;
     }
-    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-    LayoutInflater inflater = getActivity().getLayoutInflater();
 
-    View dialogView = inflater.inflate(R.layout.dialog_show_note, null);
 
 
 
