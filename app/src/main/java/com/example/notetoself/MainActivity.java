@@ -1,5 +1,7 @@
 package com.example.notetoself;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -21,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Note> listNote = new ArrayList<>();
     RecyclerView recyclerView;
     NoteAdapter adapter;
+    private boolean showDividers;
+    private SharedPreferences prefs;
 
     public void showNote(int index) {
         DialogShowNote dialog = new DialogShowNote();
@@ -40,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+//        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(adapter);
 
 
@@ -73,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -81,6 +87,21 @@ public class MainActivity extends AppCompatActivity {
     public void createNewNote(Note note){
         listNote.add(note);
         adapter.notifyDataSetChanged();
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        prefs = getSharedPreferences("Note to Self", MODE_PRIVATE);
+        showDividers = prefs.getBoolean("dividers",true);
+        if (showDividers) {
+            recyclerView.addItemDecoration(new DividerItemDecoration(this,LinearLayoutManager.VERTICAL));
+
+        }else {
+            if(recyclerView.getItemDecorationCount()>0){
+                recyclerView.removeItemDecorationAt(0);
+            }
+        }
     }
 
 }
