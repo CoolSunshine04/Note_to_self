@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,11 +21,16 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    ArrayList<Note> listNote = new ArrayList<>();
+    ArrayList<Note> listNote;
     RecyclerView recyclerView;
     NoteAdapter adapter;
     private boolean showDividers;
     private SharedPreferences prefs;
+
+    private JSONSerializer serializer;
+    private ArrayList<Note> notelist;
+
+
 
     public void showNote(int index) {
         DialogShowNote dialog = new DialogShowNote();
@@ -37,6 +43,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        serializer = new JSONSerializer("NoteToSelf.json", getApplicationContext());
+        try {
+            listNote = serializer.load();
+        } catch (Exception e) {
+            listNote = new ArrayList<>();
+            Log.e("Error loading notes: ", "", e);
+        }
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         adapter = new NoteAdapter(this, listNote);
@@ -57,8 +71,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 DialogNewNote dialog = new DialogNewNote();
                 dialog.show(getSupportFragmentManager(), "");
+
             }
         });
+
+
+
     }
 
     @Override
@@ -102,6 +120,19 @@ public class MainActivity extends AppCompatActivity {
                 recyclerView.removeItemDecorationAt(0);
             }
         }
+    }
+    public void saveNotes() {
+        try {
+            serializer.save(listNote);
+        } catch (Exception e) {
+            Log.e("Error saving Notes", "", e);
+        }
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        saveNotes();
     }
 
 }
